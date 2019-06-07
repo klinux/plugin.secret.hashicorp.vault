@@ -7,33 +7,12 @@
  */
 
 apply plugin: 'java'
-//apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
-
-//gocdPlugin {
-//  id = 'com.example.secrets'
-//  pluginVersion = '0.0.1'
-//  goCdVersion = '19.5.0'
-//  name = 'Skeleton secret manager plugin'
-//  description = 'The plugin description for utilizing secret manager for the GoCD server'
-//  vendorName = 'ThoughtWorks, Inc.'
-//  vendorUrl = 'https://github.com/gocd-contrib/secrets-skeleton-plugin'
-//
-//  githubRepo {
-//    owner = System.getenv('GITHUB_USER') ?: 'bob'
-//    repo = 'secrets-skeleton-plugin'
-//    token = System.getenv('GITHUB_TOKEN') ?: 'bad-token'
-//  }
-//
-//  pluginProject = project
-//
-//  prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
-//  assetsToRelease = [project.tasks.findByName('jar')]
-//}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-version = "1.0-SNAPSHOT"//gocdPlugin.fullVersion(project)
+group= "com.example.secrets"
+version = "1.0-SNAPSHOT"
 
 repositories {
   mavenCentral()
