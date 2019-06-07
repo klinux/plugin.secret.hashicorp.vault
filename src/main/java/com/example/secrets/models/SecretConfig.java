@@ -36,6 +36,10 @@ public class SecretConfig {
         return GSON.fromJson(requestBody, SecretConfig.class);
     }
 
+    public String getProperty() {
+        return property;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
