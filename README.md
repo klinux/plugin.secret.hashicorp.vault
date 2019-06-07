@@ -8,7 +8,7 @@ This is a skeleton plugin which implements the GoCD [Secret Plugin](https://plug
 * Edit the `SecretConfig.java` class to add any configuration fields that is needed for the secret manager of your choice.
 * Edit the `secrets.template.html` file which contains the view for the configuration required to access secrets.
 * Implement the `SecretConfigValidator.java` class to add validations for the secret configs.
-* Implement the `SecretConfigLookupExecutor.java` class to resolve the keys utilized in GoCD.
+* Implement the `SecretConfigLookupExecutor.java` class to return the resolved secrets on the basis of keys received in the request.
 
 ## Building the code base
 
