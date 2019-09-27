@@ -12,15 +12,15 @@ Este plugin habilita o GoCD para usar o Hashicorp Vault como servidor de secrets
 
 ## criar diretorios para manter dados
 ```sh
-mkdir -p /data/consul
-mkdir -p /data/consulw
-mkdir -p /data/godata
-mkdir -p /data/plugins
+mkdir -p data/consul
+mkdir -p data/consulw
+mkdir -p data/godata
+mkdir -p data/plugins
 
-chmod -R 777 /data/consul
-chmod -R 777 /data/consulw
-chmod -R 777 /data/godata
-chmod -R 777 /data/plugins
+chmod -R 777 data/consul
+chmod -R 777 data/consulw
+chmod -R 777 data/godata
+chmod -R 777 data/plugins
 ```
 
 ## executar o docker-compose para subir os servicos
