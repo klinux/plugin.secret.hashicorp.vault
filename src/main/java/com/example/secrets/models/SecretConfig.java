@@ -25,19 +25,22 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 public class SecretConfig {
-    @Expose
-    @Property(name = "property", required = true)
-    @SerializedName("property")
-    private String property;
+
+    public static final String VAULT_TOKEN_PROPERTY = "SecretsVaultToken";
 
     private static final Gson GSON = new GsonBuilder().serializeNulls().create();
+
+    @Expose
+    @Property(name = VAULT_TOKEN_PROPERTY, required = true)
+    @SerializedName(VAULT_TOKEN_PROPERTY)
+    private String secretsVaultToken;
 
     public static SecretConfig fromJSON(String requestBody) {
         return GSON.fromJson(requestBody, SecretConfig.class);
     }
 
     public String getProperty() {
-        return property;
+        return secretsVaultToken;
     }
 
     @Override
@@ -45,11 +48,11 @@ public class SecretConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SecretConfig that = (SecretConfig) o;
-        return Objects.equals(property, that.property);
+        return Objects.equals(secretsVaultToken, that.secretsVaultToken);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(property);
+        return Objects.hash(secretsVaultToken);
     }
 }

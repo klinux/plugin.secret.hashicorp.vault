@@ -12,7 +12,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group= "com.example.secrets"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
   mavenCentral()
@@ -29,6 +29,9 @@ dependencies {
   testCompile group: 'org.assertj', name: 'assertj-core', version: '3.12.2'
   testCompile group: 'org.mockito', name: 'mockito-core', version: '2.25.1'
   testCompile group: 'cd.go.plugin', name: 'go-plugin-api', version: '19.1.0'
+  
+  // Vault Driver
+  implementation 'com.bettercloud:vault-java-driver:5.0.0'
 }
 
 test {
