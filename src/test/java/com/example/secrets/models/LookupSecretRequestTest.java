@@ -23,15 +23,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LookupSecretRequestTest {
     @Test
     void shouldDeserializeFromJson() {
-        LookupSecretRequest lookupSecretRequest = LookupSecretRequest.fromJSON("{" +
+        LookupSecretRequest tokenLookupSecretRequest = LookupSecretRequest.fromJSON("{" +
                 "\"configuration\": {" +
-                "\"property\": \"some_property\" " +
+                "\"SecretsVaultToken\": \"some_property\" " +
                 "   }," +
                 "\"keys\": [\"key1\",\"key2\"]" +
                 "}"
         );
 
-        assertThat(lookupSecretRequest.getConfig().getProperty()).isEqualTo("some_property");
-        assertThat(lookupSecretRequest.getKeys().size()).isEqualTo(2);
+        assertThat(tokenLookupSecretRequest.getConfig().getVaultToken()).isEqualTo("some_property");
+        assertThat(tokenLookupSecretRequest.getKeys().size()).isEqualTo(2);
+
+        LookupSecretRequest urlLookupSecretRequest = LookupSecretRequest.fromJSON("{" +
+                "\"configuration\": {" +
+                "\"SecretsVaultURL\": \"some_property\" " +
+                "   }," +
+                "\"keys\": [\"key1\",\"key2\"]" +
+                "}"
+        );
+
+        assertThat(urlLookupSecretRequest.getConfig().getVaultURL()).isEqualTo("some_property");
+        assertThat(urlLookupSecretRequest.getKeys().size()).isEqualTo(2);
     }
 }

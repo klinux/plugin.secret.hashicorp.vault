@@ -27,6 +27,7 @@ import java.util.Objects;
 public class SecretConfig {
 
     public static final String VAULT_TOKEN_PROPERTY = "SecretsVaultToken";
+    public static final String VAULT_URL_PROPERTY = "SecretsVaultURL";
 
     private static final Gson GSON = new GsonBuilder().serializeNulls().create();
 
@@ -35,12 +36,21 @@ public class SecretConfig {
     @SerializedName(VAULT_TOKEN_PROPERTY)
     private String secretsVaultToken;
 
+    @Expose
+    @Property(name = VAULT_URL_PROPERTY, required = true)
+    @SerializedName(VAULT_URL_PROPERTY)
+    private String secretsVaultURL;
+
     public static SecretConfig fromJSON(String requestBody) {
         return GSON.fromJson(requestBody, SecretConfig.class);
     }
 
-    public String getProperty() {
+    public String getVaultToken() {
         return secretsVaultToken;
+    }
+
+    public String getVaultURL() {
+        return secretsVaultURL;
     }
 
     @Override
@@ -48,11 +58,16 @@ public class SecretConfig {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SecretConfig that = (SecretConfig) o;
-        return Objects.equals(secretsVaultToken, that.secretsVaultToken);
+        if (that.secretsVaultToken == secretsVaultToken) {
+            return Objects.equals(secretsVaultToken, that.secretsVaultToken);
+        } else {
+            return Objects.equals(secretsVaultURL, that.secretsVaultURL);
+        }
+        
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(secretsVaultToken);
+        return Objects.hash(secretsVaultToken, secretsVaultURL);
     }
 }

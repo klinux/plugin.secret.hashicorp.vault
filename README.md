@@ -8,6 +8,13 @@ Este plugin habilita o GoCD para usar o Hashicorp Vault como servidor de secrets
 ./gradlew clean test assemble
 ```
 
+Ou execute
+
+```sh
+make all
+```
+Par buildar a lib e colocar na pasta para o GoCD usar a lib.
+
 # Rodar o vault e unseal
 
 ## criar diretorios para manter dados

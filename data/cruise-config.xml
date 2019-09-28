@@ -4,7 +4,6 @@
     <backup emailOnSuccess="true" emailOnFailure="true" />
   </server>
   <agents>
-    <agent hostname="653c0b953705" ipaddress="172.16.238.22" uuid="af70fa78-9d87-4977-9887-f6184fb2dbe7" />
-    <agent hostname="99494f65d5f8" ipaddress="172.16.238.22" uuid="2e0ef22f-976a-43f3-9c9c-ca2b276fc3a1" />
+    <agent hostname="c3ef803ff4b3" ipaddress="172.16.239.22" uuid="df23bc77-e29c-4e8c-a063-8caebc361133" />
   </agents>
 </cruise>

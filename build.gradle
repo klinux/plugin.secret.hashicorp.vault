@@ -7,12 +7,34 @@
  */
 
 apply plugin: 'java'
+apply from: "https://raw.githubusercontent.com/gocd/gocd-plugin-gradle-task-helpers/master/helper.gradle?_=${(int) (new Date().toInstant().epochSecond / 60)}"
+
+group = "com.example.secrets"
+version = "1.0.0"
+
+gocdPlugin {
+  id = 'cd.go.com.example.secrets'
+  pluginVersion = '$version'
+  goCdVersion = '19.8.0'
+  name = 'Hashicorp Vault secrets plugin for GoCD'
+  description = 'This plugin can get kv from Hashicorp Vault.'
+  vendorName = 'ThoughtWorks, Inc.'
+  vendorUrl = 'https://github.com/klinux/secrets-skeleton-plugin'
+
+  githubRepo {
+    owner = System.getenv('GITHUB_USER') ?: 'klinux'
+    repo = 'secrets-skeleton-plugin'
+    token = System.getenv('GITHUB_TOKEN') ?: 'bad-token'
+  }
+
+  pluginProject = project
+
+  prerelease = !"No".equalsIgnoreCase(System.getenv('PRERELEASE'))
+  assetsToRelease = [project.tasks.findByName('jar')]
+}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-group= "com.example.secrets"
-version = "1.0.0"
 
 repositories {
   mavenCentral()
@@ -20,7 +42,7 @@ repositories {
 
 dependencies {
   compile group: 'com.github.bdpiparva.plugin.base', name: 'gocd-plugin-base', version: '0.0.5'
-  compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '19.1.0'
+  compileOnly group: 'cd.go.plugin', name: 'go-plugin-api', version: '19.8.0'
 
   // Use JUnit test framework
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.1'
@@ -32,6 +54,13 @@ dependencies {
   
   // Vault Driver
   implementation 'com.bettercloud:vault-java-driver:5.0.0'
+}
+
+jar {
+
+    from(configurations.compile) {
+        into "lib/"
+    }
 }
 
 test {

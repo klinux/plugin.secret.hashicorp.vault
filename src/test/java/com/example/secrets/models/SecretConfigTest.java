@@ -24,11 +24,18 @@ class SecretConfigTest {
 
     @Test
     void shouldDeserializeFromJson() {
-        SecretConfig secretConfig = SecretConfig.fromJSON("{" +
-                "\"property\": \"some_property\" " +
+        SecretConfig secretConfigToken = SecretConfig.fromJSON("{" +
+                "\"SecretsVaultToken\": \"some_property\" " +
                 "}"
         );
 
-        assertThat(secretConfig.getProperty()).isEqualTo("some_property");
+        assertThat(secretConfigToken.getVaultToken()).isEqualTo("some_property");
+
+        SecretConfig secretConfigURL = SecretConfig.fromJSON("{" +
+                "\"SecretsVaultURL\": \"some_property\" " +
+                "}"
+        );
+        
+        assertThat(secretConfigURL.getVaultURL()).isEqualTo("some_property");
     }
 }

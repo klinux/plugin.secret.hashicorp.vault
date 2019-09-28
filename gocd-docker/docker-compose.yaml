@@ -1,0 +1,41 @@
+version: '2'
+services:
+  ### Go server
+  go-server:
+    image: gocd/gocd-server:v19.8.0
+    ports:
+      - "8153:8153"
+      - "8154:8154"
+    volumes:
+      - ../data/cruise-config.xml:/godata/config/cruise-config.xml
+      - ../data/godata:/godata
+      - ../data/plugins:/godata/plugins/external
+    cap_add:
+      - NET_ADMIN
+    networks:
+      gocd_net:
+        ipv4_address: 172.16.239.21
+
+  ### Go Agent
+  go-agent:
+    image: gocd/gocd-agent-ubuntu-18.04:v19.8.0
+    links:
+      - "go-server"
+    depends_on:
+      - "go-server"
+    environment:
+      AGENT_AUTO_REGISTER_KEY: '123456789abcdefgh987654321'
+      GO_SERVER_URL: https://go-server:8154/go
+    cap_add:
+      - NET_ADMIN
+    networks:
+      gocd_net:
+        ipv4_address: 172.16.239.22
+
+networks:
+  gocd_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.239.0/24
