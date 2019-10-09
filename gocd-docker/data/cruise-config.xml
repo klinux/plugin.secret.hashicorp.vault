@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="126">
+  <server artifactsdir="artifacts" agentAutoRegisterKey="123456789abcdefgh987654321" webhookSecret="57b5b4a5-e839-4735-935c-168e97b80033" commandRepositoryLocation="default" serverId="239404b7-69fe-4fc9-81e9-945654461562" tokenGenerationKey="490715a1-7488-4b9c-a2e7-3a56efe7fcc0">
+    <backup emailOnSuccess="true" emailOnFailure="true" />
+  </server>
+  <secretConfigs>
+    <secretConfig id="teste" pluginId="cd.go.plugin.secret.hashicorp.vault">
+      <configuration>
+        <property>
+          <key>security_token</key>
+          <value>s.MAc3qESYmrgacHFKF1ZDYfQK</value>
+        </property>
+        <property>
+          <key>vault_url</key>
+          <value>http://172.16.23.82:8200</value>
+        </property>
+        <property>
+          <key>vault_validate_ssl</key>
+          <value>false</value>
+        </property>
+      </configuration>
+      <rules>
+        <allow action="refer" type="*">*</allow>
+      </rules>
+      <description>Tetse</description>
+    </secretConfig>
+  </secretConfigs>
+  <pipelines group="defaultGroup">
+    <pipeline name="build-driver">
+      <environmentvariables>
+        <variable name="TESTE">
+          <value>{{SECRET:[teste][kv/kleber]}}</value>
+        </variable>
+      </environmentvariables>
+      <materials>
+        <git url="https://github.com/BetterCloud/vault-java-driver.git" />
+      </materials>
+      <stage name="build-driver">
+        <jobs>
+          <job name="build-driver">
+            <tasks>
+              <exec command="sh">
+                <arg>-c</arg>
+                <arg>echo ${TESTE} &gt; /tmp/agent/teste.txt</arg>
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+  </pipelines>
+  <agents>
+    <agent hostname="b8ac0071110e" ipaddress="172.16.239.22" uuid="62db46b6-ae0f-43de-b672-97f5db71f41c" />
+  </agents>
+</cruise>

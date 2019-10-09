@@ -17,23 +17,27 @@ Par buildar a lib e colocar na pasta para o GoCD usar a lib.
 
 # Rodar o vault e unseal
 
-## criar diretorios para manter dados
-```sh
-mkdir -p data/consul
-mkdir -p data/consulw
-mkdir -p data/godata
-mkdir -p data/plugins
+## executar o docker-compose para subir os servicos do vault
 
-chmod -R 777 data/consul
-chmod -R 777 data/consulw
-chmod -R 777 data/godata
-chmod -R 777 data/plugins
+```sh
+cd vault-docker
+docker-compose up -d
 ```
 
-## executar o docker-compose para subir os servicos
-
+## para parar estes servicos do vault
 ```sh
+docker-compose down
+```
+
+## executar o docker-compose para subir os servicos do gocd
+```sh
+cd gocd-docker
 docker-compose up -d
+```
+
+## para parar estes servicos do gocd
+```sh
+docker-compose down
 ```
 
 ## acessar o container do vault

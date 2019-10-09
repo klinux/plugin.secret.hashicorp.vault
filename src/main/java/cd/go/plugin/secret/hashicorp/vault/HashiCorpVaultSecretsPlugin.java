@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.example.secrets;
+package cd.go.plugin.secret.hashicorp.vault;
 
-import com.example.secrets.executors.SecretConfigLookupExecutor;
-import com.example.secrets.models.SecretConfig;
-import com.example.secrets.validators.SecretConfigValidator;
+import cd.go.plugin.secret.hashicorp.vault.models.SecretConfig;
+import cd.go.plugin.secret.hashicorp.vault.executors.SecretConfigLookupExecutor;
+import cd.go.plugin.secret.hashicorp.vault.validators.SecretConfigValidator;
 import com.github.bdpiparva.plugin.base.dispatcher.BaseBuilder;
 import com.github.bdpiparva.plugin.base.dispatcher.RequestDispatcher;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
@@ -32,7 +32,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import static java.util.Collections.singletonList;
 
 @Extension
-public class ExamplePlugin implements GoPlugin {
+public class HashiCorpVaultSecretsPlugin implements GoPlugin {
     private RequestDispatcher requestDispatcher;
 
     @Override

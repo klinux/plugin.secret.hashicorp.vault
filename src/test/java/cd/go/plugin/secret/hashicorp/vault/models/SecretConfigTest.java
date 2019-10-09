@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.secrets.models;
+package cd.go.plugin.secret.hashicorp.vault.models;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,17 +25,24 @@ class SecretConfigTest {
     @Test
     void shouldDeserializeFromJson() {
         SecretConfig secretConfigToken = SecretConfig.fromJSON("{" +
-                "\"SecretsVaultToken\": \"some_property\" " +
+                "\"security_token\": \"some_property\" " +
                 "}"
         );
 
         assertThat(secretConfigToken.getVaultToken()).isEqualTo("some_property");
 
         SecretConfig secretConfigURL = SecretConfig.fromJSON("{" +
-                "\"SecretsVaultURL\": \"some_property\" " +
+                "\"vault_url\": \"some_property\" " +
                 "}"
         );
         
         assertThat(secretConfigURL.getVaultURL()).isEqualTo("some_property");
+
+        SecretConfig secretConfigSSL = SecretConfig.fromJSON("{" +
+                "\"vault_validate_ssl\": \"some_property\" " +
+                "}"
+        );
+
+        assertThat(secretConfigSSL.getVaultSSL()).isEqualTo("some_property");
     }
 }

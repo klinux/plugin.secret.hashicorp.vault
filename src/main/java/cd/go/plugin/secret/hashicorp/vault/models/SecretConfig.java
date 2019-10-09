@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.secrets.models;
+package cd.go.plugin.secret.hashicorp.vault.models;
 
 import com.github.bdpiparva.plugin.base.annotations.Property;
 import com.google.gson.Gson;
@@ -26,20 +26,26 @@ import java.util.Objects;
 
 public class SecretConfig {
 
-    public static final String VAULT_TOKEN_PROPERTY = "SecretsVaultToken";
-    public static final String VAULT_URL_PROPERTY = "SecretsVaultURL";
+    public static final String VAULT_URL_PROPERTY = "vault_url";
+    public static final String SECURITY_TOKEN = "security_token";
+    public static final String VAULT_SSL_PROPERTY = "vault_validate_ssl";
 
     private static final Gson GSON = new GsonBuilder().serializeNulls().create();
 
     @Expose
-    @Property(name = VAULT_TOKEN_PROPERTY, required = true)
-    @SerializedName(VAULT_TOKEN_PROPERTY)
+    @Property(name = SECURITY_TOKEN, required = true)
+    @SerializedName(SECURITY_TOKEN)
     private String secretsVaultToken;
 
     @Expose
     @Property(name = VAULT_URL_PROPERTY, required = true)
     @SerializedName(VAULT_URL_PROPERTY)
     private String secretsVaultURL;
+
+    @Expose
+    @Property(name = VAULT_SSL_PROPERTY, required = false)
+    @SerializedName(VAULT_SSL_PROPERTY)
+    private String secretsVaultSSL;
 
     public static SecretConfig fromJSON(String requestBody) {
         return GSON.fromJson(requestBody, SecretConfig.class);
@@ -49,25 +55,27 @@ public class SecretConfig {
         return secretsVaultToken;
     }
 
-    public String getVaultURL() {
-        return secretsVaultURL;
-    }
+    public String getVaultURL() { return secretsVaultURL; }
+
+    public String getVaultSSL() { return secretsVaultSSL; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SecretConfig that = (SecretConfig) o;
-        if (that.secretsVaultToken == secretsVaultToken) {
-            return Objects.equals(secretsVaultToken, that.secretsVaultToken);
+        if (that.secretsVaultToken.equals(secretsVaultToken)) {
+            return true;
+        } else if (that.secretsVaultToken.equals(secretsVaultSSL)) {
+            return Objects.equals(secretsVaultToken, that.secretsVaultSSL);
         } else {
             return Objects.equals(secretsVaultURL, that.secretsVaultURL);
         }
-        
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(secretsVaultToken, secretsVaultURL);
+        return Objects.hash(secretsVaultToken, secretsVaultURL, secretsVaultSSL);
     }
 }

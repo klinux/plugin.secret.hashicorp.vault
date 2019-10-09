@@ -1,8 +1,11 @@
-version: '2'
+version: '2.2'
+
+#define docker containers as services
 services:
-  ### DNS Masq 02
+  #create a DNS service which also forwards lookups to consul DNS
   dnsmasq: &dnsmasq
     image: storytel/dnsmasq
+    init: true
     command:
       - /bin/sh
       - -c
@@ -53,24 +56,33 @@ services:
       internal:
         ipv4_address: 172.16.238.2
 
-  ### Consul Server
+
+  dnsmasq-secondary:
+    <<: *dnsmasq
+    networks:
+      internal:
+        ipv4_address: 172.16.238.3
+
   consul:
     image: 'consul'
+    init: true
     command: 'agent -server -bootstrap-expect 1 -disable-host-node-id -client 0.0.0.0 -ui'
-    volumes:
-      - ./data/consul:/consul/data
+    healthcheck:
+      test: ['CMD', '/bin/sh', '-c', 'curl -sfLo /dev/null http://127.0.0.1:8500/v1/health/node/$$HOSTNAME']
+    scale: 1
     networks:
       - internal
     ports:
       - "8500:8500"
     dns:
       - 172.16.238.2
+      - 172.16.238.3
     depends_on:
       - dnsmasq
 
-  ### Consul worker
   consul-worker:
     image: 'consul'
+    init: true
     entrypoint: ''
     command:
       - /bin/sh
@@ -81,18 +93,20 @@ services:
         until apk add bind-tools; do sleep 3; done
         until dig +short consul.service.consul; do sleep 1; done
         docker-entrypoint.sh agent -server -join consul.service.consul -disable-host-node-id -client 0.0.0.0 -ui
-    volumes:
-      - ./data/consulw:/consul/data
+    scale: 2
     networks:
       - internal
     dns:
       - 172.16.238.2
+      - 172.16.238.3
     depends_on:
-      - consul
+      consul:
+        condition: service_healthy
 
-  ### Vault Server
+
   vault:
     image: 'vault'
+    init: true
     #exports work around vault bug https://github.com/hashicorp/vault/issues/3866
     #IP is the IP address of the default networking route
     #$$ escapes in "$" in docker-compose string interpolation
@@ -104,102 +118,22 @@ services:
         export IP=$$(ip -o ro get $$(ip ro | awk '$$1 == "default" { print $$3 }') | awk '{print $$5}')
         export VAULT_API_ADDR="http://$${IP}:8200" VAULT_CLUSTER_ADDR="https://$${IP}:8201"
         exec vault server -config=/vault/config
+    #set scale: 3 for HA configuration
+    scale: 1
     environment:
       VAULT_ADDR: 'http://127.0.0.1:8200'
-      VAULT_LOCAL_CONFIG: '{"backend": {"consul": {"address": "consul:8500", "path":"vault", "scheme": "http"}}, "listener": {"tcp":{"address": "0.0.0.0:8200","tls_disable":"1"}}, "default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
-      VAULT_DEV_ROOT_TOKEN_ID: 's.AnIQwKnMWUXTcSaQE8heFJXu'
+      VAULT_LOCAL_CONFIG: '{"backend": {"consul": {"address": "consul:8500", "path":"vault", "scheme": "http"}}, "ui": true, "listener": {"tcp":{"address": "0.0.0.0:8200","tls_disable":"1"}}, "default_lease_ttl": "168h", "max_lease_ttl": "720h"}'
     cap_add:
       - IPC_LOCK
     networks:
       - internal
     ports:
       - "8200:8200"
-      - "8201:8201"
     dns:
       - 172.16.238.2
+      - 172.16.238.3
     depends_on:
       - consul-worker
-
-  ### Vault UI
-  vault-ui:
-    image: 'djenriquez/vault-ui'
-    environment:
-      VAULT_AUTH_DEFAULT: "TOKEN"
-      VAULT_URL_DEFAULT: "http://active.vault.service.consul:8200"
-    networks:
-      - internal
-    ports:
-      - "8000:8000"
-    dns:
-      - 172.16.238.2
-    depends_on:
-      - vault
-    entrypoint: ""
-    command:
-      - /bin/sh
-      - -c
-      - |
-        # this command will automatically register the vault UI app as a consul service
-        set -ex
-        [ -d /consul ] || mkdir -p /consul/config /consul/data
-        [ -f /consul/config/vault-ui.json ] || echo '{"service": {"name": "vault-ui", "tags": [], "port": 8000}}' > /consul/config/vault-ui.json
-        type -p curl || (
-          until apk update; do sleep 3; done
-          until apk add curl; do sleep 3; done
-        )
-        grep consul /etc/group || addgroup -g 8000 -S consul
-        grep consul /etc/passwd || adduser -u 8000 -G consul -h /consul -S consul
-        type -p consul || (
-          cd /usr/local/bin
-          until echo 'f97996296ef3905c38c504b35035fb731d3cfd9cad129c9523402a4229c709c5  consul_1.2.3_linux_amd64.zip' | sha256sum -c -; do
-            curl -LO https://releases.hashicorp.com/consul/1.2.3/consul_1.2.3_linux_amd64.zip
-            sleep 3
-          done
-          unzip consul_1.2.3_linux_amd64.zip
-          chmod 755 consul
-          rm consul_1.2.3_linux_amd64.zip
-        )
-        type -p consul-template || (
-          cd /usr/local/bin
-          until curl -L https://releases.hashicorp.com/consul-template/0.19.5/consul-template_0.19.5_linux_amd64.tgz | tar -xz; do
-            sleep 3
-          done
-        )
-        chown -R consul. /consul
-        su - -s /bin/sh consul -c /bin/sh -c 'nohup consul agent -join consul -config-dir=/consul/config -data-dir=/consul/data &'
-        exec /app/bin/entrypoint.sh start_app
-
-  ### Go server
-  go-server:
-    image: gocd/gocd-server:v19.8.0
-    ports:
-      - "8153:8153"
-      - "8154:8154"
-    volumes:
-      - ./data/cruise-config.xml:/godata/config/cruise-config.xml
-      - ./data/godata:/godata
-      - ./data/plugins:/godata/plugins/external
-    cap_add:
-      - NET_ADMIN
-    networks:
-      internal:
-        ipv4_address: 172.16.238.21
-
-  ### Go Agent
-  go-agent:
-    image: gocd/gocd-agent-ubuntu-18.04:v19.8.0
-    links:
-      - "go-server"
-    depends_on:
-      - "go-server"
-    environment:
-      AGENT_AUTO_REGISTER_KEY: '123456789abcdefgh987654321'
-      GO_SERVER_URL: https://go-server:8154/go
-    cap_add:
-      - NET_ADMIN
-    networks:
-      internal:
-        ipv4_address: 172.16.238.22
 
 networks:
   internal:

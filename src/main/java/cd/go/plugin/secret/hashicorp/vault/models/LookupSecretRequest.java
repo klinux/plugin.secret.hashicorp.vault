@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.secrets.models;
+package cd.go.plugin.secret.hashicorp.vault.models;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

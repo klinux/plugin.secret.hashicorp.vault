@@ -2,10 +2,11 @@
 build
 .idea
 out
-data/consul/*
-data/consulw/*
-data/godata/*
-data/plugins/*
+gocd-docker/data/agent/*
+gocd-docker/data/godata/*
+gocd-docker/data/plugins/*.jar
+vault-docker/data/consul/*
+vault-docker/data/consulw/*
 .vscode
 .settings
 bin

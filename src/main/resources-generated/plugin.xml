@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<go-plugin id="cd.go.com.example.secrets" version="1">
+<go-plugin id="cd.go.plugin.secret.hashicorp.vault" version="1">
   <about>
     <name>Hashicorp Vault secrets plugin for GoCD</name>
     <version>1.0.0</version>

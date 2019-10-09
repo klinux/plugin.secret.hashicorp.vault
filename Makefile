@@ -1,6 +1,6 @@
 # Vars
 BUILD_DIR="build"
-PLUGIN="data/plugins"
+PLUGIN="gocd-docker/data/plugins"
 
 .PHONY: build
 

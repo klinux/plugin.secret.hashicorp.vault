@@ -7,9 +7,9 @@ services:
       - "8153:8153"
       - "8154:8154"
     volumes:
-      - ../data/cruise-config.xml:/godata/config/cruise-config.xml
-      - ../data/godata:/godata
-      - ../data/plugins:/godata/plugins/external
+      - ./data/cruise-config.xml:/godata/config/cruise-config.xml
+      - ./data/godata:/godata
+      - ./data/plugins:/godata/plugins/external
     cap_add:
       - NET_ADMIN
     networks:
@@ -28,6 +28,8 @@ services:
       GO_SERVER_URL: https://go-server:8154/go
     cap_add:
       - NET_ADMIN
+    volumes:
+      - ./data/agent:/tmp/agent
     networks:
       gocd_net:
         ipv4_address: 172.16.239.22

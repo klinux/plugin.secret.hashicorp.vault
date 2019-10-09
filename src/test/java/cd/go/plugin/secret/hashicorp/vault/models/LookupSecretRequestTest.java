@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.secrets.models;
+package cd.go.plugin.secret.hashicorp.vault.models;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,7 @@ class LookupSecretRequestTest {
     void shouldDeserializeFromJson() {
         LookupSecretRequest tokenLookupSecretRequest = LookupSecretRequest.fromJSON("{" +
                 "\"configuration\": {" +
-                "\"SecretsVaultToken\": \"some_property\" " +
+                "\"security_token\": \"some_property\" " +
                 "   }," +
                 "\"keys\": [\"key1\",\"key2\"]" +
                 "}"
@@ -36,7 +36,7 @@ class LookupSecretRequestTest {
 
         LookupSecretRequest urlLookupSecretRequest = LookupSecretRequest.fromJSON("{" +
                 "\"configuration\": {" +
-                "\"SecretsVaultURL\": \"some_property\" " +
+                "\"vault_url\": \"some_property\" " +
                 "   }," +
                 "\"keys\": [\"key1\",\"key2\"]" +
                 "}"
@@ -44,5 +44,16 @@ class LookupSecretRequestTest {
 
         assertThat(urlLookupSecretRequest.getConfig().getVaultURL()).isEqualTo("some_property");
         assertThat(urlLookupSecretRequest.getKeys().size()).isEqualTo(2);
+
+        LookupSecretRequest sslLookupSecretRequest = LookupSecretRequest.fromJSON("{" +
+                "\"configuration\": {" +
+                "\"vault_validate_ssl\": \"some_property\" " +
+                "   }," +
+                "\"keys\": [\"key1\",\"key2\"]" +
+                "}"
+        );
+
+        assertThat(sslLookupSecretRequest.getConfig().getVaultSSL()).isEqualTo("some_property");
+        assertThat(sslLookupSecretRequest.getKeys().size()).isEqualTo(2);
     }
 }
