@@ -9,4 +9,4 @@ vault-docker/data/consul/*
 vault-docker/data/consulw/*
 .vscode
 .settings
-bin
+bin/*
