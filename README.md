@@ -58,6 +58,9 @@ vault operator init
 for key in <unseal_key1> <unseal_key2> <unseal_key3>; do vault operator unseal "${key}"; done
 ```
 
+## Para acessar o Vault use o seguinte endereco
+http://localhost:8200/ui
+
 # Licença
 
 ```plain
