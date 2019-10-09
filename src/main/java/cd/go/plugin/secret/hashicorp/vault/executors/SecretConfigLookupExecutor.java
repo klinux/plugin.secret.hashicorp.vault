@@ -44,7 +44,7 @@ public class SecretConfigLookupExecutor extends LookupExecutor<LookupSecretReque
         List<String> requestKeys = request.getKeys();
         List<String> unresolvedKeys = new ArrayList<>();
 
-        // Check if using SSL
+        // Check if verify SSL certificate
         Boolean verifySSL;
         verifySSL = secretConfig.getVaultSSL().equals("true");
 
