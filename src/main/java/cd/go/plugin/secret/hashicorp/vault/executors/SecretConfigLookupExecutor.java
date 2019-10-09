@@ -43,16 +43,14 @@ public class SecretConfigLookupExecutor extends LookupExecutor<LookupSecretReque
         SecretConfig secretConfig = request.getConfig();
         List<String> requestKeys = request.getKeys();
         List<String> unresolvedKeys = new ArrayList<>();
-
-        // Check if verify SSL certificate
-        Boolean verifySSL;
-        verifySSL = secretConfig.getVaultSSL().equals("true");
-
-        final VaultConfig config;
+        Map<String, String> response;
 
         try {
 
-            config = new VaultConfig()
+            // Check if verify SSL certificate
+            Boolean verifySSL = secretConfig.getVaultSSL().equals("true");
+
+            VaultConfig config = new VaultConfig()
                     .address(secretConfig.getVaultURL())
                     .token(secretConfig.getVaultToken())
                     .openTimeout(5)
@@ -60,13 +58,14 @@ public class SecretConfigLookupExecutor extends LookupExecutor<LookupSecretReque
                     .sslConfig(new SslConfig().verify(verifySSL).build())
                     .build();
 
-            final Vault vault = new Vault(config);
+            Vault vault = new Vault(config);
+            String value;
 
             for (String key : requestKeys) {
-                final String value = vault.logical().read(key).getData().get("value");
+                value = vault.logical().read(key).getData().get("value");
 
                 if (value != null) {
-                    Map<String, String> response = new HashMap<>();
+                    response = new HashMap<>();
                     response.put("key", key);
                     response.put("value", value);
                     responseList.add(response);
@@ -79,11 +78,11 @@ public class SecretConfigLookupExecutor extends LookupExecutor<LookupSecretReque
                 return DefaultGoPluginApiResponse.success(toJson(responseList));
             }
 
-            Map<String, String> response = Collections.singletonMap("message", String.format("Secrets with keys %s not found.", unresolvedKeys));
+            response = Collections.singletonMap("message", String.format("Secrets with keys %s not found.", unresolvedKeys));
             return new DefaultGoPluginApiResponse(NOT_FOUND_ERROR_CODE, toJson(response));
         } catch (Exception e) {
-            Map<String, String> errorMessage = Collections.singletonMap("message", "Error to connect to Vault: " + e.getMessage());
-            return DefaultGoPluginApiResponse.error(toJson(errorMessage));
+            response = Collections.singletonMap("message", "Error to connect to Vault: " + e.getMessage());
+            return DefaultGoPluginApiResponse.error(toJson(response));
         }
     }
 
